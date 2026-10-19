@@ -6,12 +6,13 @@ import { ConfigurationScreen } from './ConfigurationScreen'
 import { RoutingScreen } from './RoutingScreen'
 import { PerformanceScreen } from './PerformanceScreen'
 import { Shell, type Screen } from './Shell'
+import { StatusStrip } from './StatusStrip'
 
 function App() {
   const devices = useSyncExternalStore(backend.subscribe, backend.getSnapshot)
   const [patch, setPatch] = useState<Patch>(emptyPatch)
   const [loaded, setLoaded] = useState(false)
-  const [screen, setScreen] = useState<Screen>('routing')
+  const [screen, setScreen] = useState<Screen>('performance')
 
   useEffect(() => {
     backend.start()
@@ -33,7 +34,11 @@ function App() {
     : devices.error
 
   return (
-    <Shell screen={screen} onNavigate={setScreen}>
+    <Shell
+      screen={screen}
+      onNavigate={setScreen}
+      status={<StatusStrip patch={patch} devices={devices} />}
+    >
       {error ? (
         <Alert color="red" title="MIDI unavailable">
           {error}
@@ -43,7 +48,11 @@ function App() {
       ) : screen === 'routing' ? (
         <RoutingScreen patch={patch} setPatch={setPatch} devices={devices} />
       ) : (
-        <PerformanceScreen />
+        <PerformanceScreen
+          patch={patch}
+          setPatch={setPatch}
+          onOpenRouting={() => setScreen('routing')}
+        />
       )}
     </Shell>
   )

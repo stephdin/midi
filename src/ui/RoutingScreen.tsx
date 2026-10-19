@@ -4,11 +4,9 @@ import {
   Button,
   Group,
   NavLink,
-  Paper,
   SegmentedControl,
   Stack,
   Text,
-  Title,
 } from '@mantine/core'
 import { IconPlus } from '@tabler/icons-react'
 import type { Devices } from '../core/backend'
@@ -28,33 +26,39 @@ export function RoutingScreen({ patch, setPatch, devices }: Props) {
   const [view, setView] = useState<View>('matrix')
 
   return (
-    <Group align="flex-start" wrap="nowrap" gap="md">
-      <Paper withBorder p="xs" w={220} style={{ flexShrink: 0 }}>
+    <Group align="flex-start" wrap="nowrap" gap="xl">
+      <Box w={200} style={{ flexShrink: 0 }}>
         <Stack gap={4}>
-          <Text size="xs" fw={700} c="dimmed" tt="uppercase" px="xs">
+          <Text size="xs" fw={700} c="dimmed" tt="uppercase" lts={1} mb={4}>
             Scenes
           </Text>
           {patch.scenes.map((scene) => (
             <NavLink
               key={scene.id}
               label={scene.name}
+              variant="filled"
+              // The filled background is near-white, so force dark text on the active scene.
+              styles={scene.id === patch.activeScene ? { label: { color: 'var(--mantine-color-dark-9)' } } : undefined}
               active={scene.id === patch.activeScene}
               onClick={() => setPatch(selectScene(patch, scene.id))}
             />
           ))}
           <Button
-            variant="subtle"
+            variant="default"
             size="xs"
+            mt="xs"
             leftSection={<IconPlus size={14} />}
             onClick={() => setPatch(addScene(patch))}
           >
             Add scene
           </Button>
         </Stack>
-      </Paper>
+      </Box>
       <Box style={{ flex: 1, minWidth: 0, overflowX: 'auto' }}>
-        <Group justify="space-between" mb="sm">
-          <Title order={4}>{activeScene(patch).name}</Title>
+        <Group justify="space-between" mb="lg">
+          <Text fw={600} fz="lg">
+            {activeScene(patch).name}
+          </Text>
           <SegmentedControl
             value={view}
             onChange={(v) => setView(v as View)}

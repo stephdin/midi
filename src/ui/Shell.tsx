@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Container, Tabs } from "@mantine/core";
+import { Container, Group, Tabs, Text } from "@mantine/core";
 import {
   IconActivity,
   IconPlugConnected,
@@ -7,23 +7,30 @@ import {
   type Icon,
 } from "@tabler/icons-react";
 
-export type Screen = "routing" | "configuration" | "performance";
+export type Screen = "performance" | "routing" | "configuration";
 
 const screens: { id: Screen; label: string; icon: Icon }[] = [
-  { id: "configuration", label: "Configuration", icon: IconPlugConnected },
-  { id: "routing", label: "Routing", icon: IconRoute },
   { id: "performance", label: "Performance", icon: IconActivity },
+  { id: "routing", label: "Routing", icon: IconRoute },
+  { id: "configuration", label: "Configuration", icon: IconPlugConnected },
 ];
 
 type Props = {
   screen: Screen;
   onNavigate: (screen: Screen) => void;
+  status: ReactNode;
   children: ReactNode;
 };
 
-export function Shell({ screen, onNavigate, children }: Props) {
+export function Shell({ screen, onNavigate, status, children }: Props) {
   return (
-    <Container size="lg" py="md">
+    <Container size="lg" py="lg">
+      <Group justify="space-between" mb="lg">
+        <Text fw={700} fz="lg" lts={1}>
+          MIDI Patcher
+        </Text>
+        {status}
+      </Group>
       <Tabs
         variant="outline"
         value={screen}
@@ -41,7 +48,7 @@ export function Shell({ screen, onNavigate, children }: Props) {
           ))}
         </Tabs.List>
       </Tabs>
-      <div style={{ paddingTop: "var(--mantine-spacing-md)" }}>{children}</div>
+      <div style={{ paddingTop: "var(--mantine-spacing-xl)" }}>{children}</div>
     </Container>
   );
 }
