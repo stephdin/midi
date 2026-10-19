@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { router } from '../composition'
 import type { Devices } from '../core/backend'
-import type { Patch } from '../core/patch'
+import { activeScene, type Patch } from '../core/patch'
 import { deviceEndpoint, toggleRoute } from '../core/patchOps'
 import type { EdgeStat } from '../core/router'
 
@@ -67,7 +67,7 @@ export function Matrix({ patch, setPatch, devices }: Props) {
                   {!connected(r.key, devices.inputs) && ' (offline)'}
                 </th>
                 {cols.map((c) => {
-                  const edge = patch.edges.find((e) => e.from === r.key && e.to === c.key)
+                  const edge = activeScene(patch).edges.find((e) => e.from === r.key && e.to === c.key)
                   const stat = edge && stats.find((s) => s.id === edge.id)
                   return (
                     <td key={c.key}>

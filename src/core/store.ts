@@ -1,4 +1,4 @@
-import type { Edge, Endpoint, Patch } from './patch'
+import type { Edge, Endpoint, Patch, Scene } from './patch'
 
 // Port: where the patch is persisted (localStorage today, maybe the filesystem via Tauri later).
 export interface PatchStore {
@@ -22,11 +22,19 @@ const isEdge = (v: unknown): v is Edge =>
   typeof v.to === 'string' &&
   typeof v.enabled === 'boolean'
 
+const isScene = (v: unknown): v is Scene =>
+  isObject(v) &&
+  typeof v.id === 'string' &&
+  typeof v.name === 'string' &&
+  Array.isArray(v.edges) &&
+  v.edges.every(isEdge)
+
 // Validates untrusted data (storage, future import files). Returns null if it is not a patch.
 export function parsePatch(value: unknown): Patch | null {
   if (!isObject(value)) return null
-  const { endpoints, edges } = value
-  if (!Array.isArray(endpoints) || !Array.isArray(edges)) return null
-  if (!endpoints.every(isEndpoint) || !edges.every(isEdge)) return null
-  return { endpoints, edges }
+  const { endpoints, scenes, activeScene } = value
+  if (!Array.isArray(endpoints) || !Array.isArray(scenes)) return null
+  if (!endpoints.every(isEndpoint) || !scenes.every(isScene)) return null
+  if (scenes.length === 0 || !scenes.some((s) => s.id === activeScene)) return null
+  return { endpoints, scenes, activeScene: activeScene as string }
 }

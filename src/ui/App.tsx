@@ -1,33 +1,17 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
+import { Alert } from '@mantine/core'
 import { backend, router, store } from '../composition'
-import type { PortInfo } from '../core/backend'
 import { emptyPatch, type Patch } from '../core/patch'
-import { Matrix } from './Matrix'
-
-function PortList({ title, ports }: { title: string; ports: PortInfo[] }) {
-  return (
-    <section>
-      <h2>{title}</h2>
-      {ports.length === 0 ? (
-        <p>No devices connected</p>
-      ) : (
-        <ul>
-          {ports.map((p) => (
-            <li key={p.id}>
-              {p.id} | {p.name} | {p.manufacturer || '(empty)'} | v{p.version} |{' '}
-              {p.state} | {p.connection}
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  )
-}
+import { ConfigurationScreen } from './ConfigurationScreen'
+import { RoutingScreen } from './RoutingScreen'
+import { PerformanceScreen } from './PerformanceScreen'
+import { Shell, type Screen } from './Shell'
 
 function App() {
   const devices = useSyncExternalStore(backend.subscribe, backend.getSnapshot)
   const [patch, setPatch] = useState<Patch>(emptyPatch)
   const [loaded, setLoaded] = useState(false)
+  const [screen, setScreen] = useState<Screen>('routing')
 
   useEffect(() => {
     backend.start()
@@ -44,16 +28,24 @@ function App() {
     store.save(patch)
   }, [patch, loaded])
 
-  if (!backend.supported) return <p>Web MIDI is not supported in this browser</p>
-  if (devices.error) return <p>{devices.error}</p>
+  const error = !backend.supported
+    ? 'Web MIDI is not supported in this browser'
+    : devices.error
 
   return (
-    <>
-      <h1>MIDI devices</h1>
-      <PortList title="Inputs" ports={devices.inputs} />
-      <PortList title="Outputs" ports={devices.outputs} />
-      <Matrix patch={patch} setPatch={setPatch} devices={devices} />
-    </>
+    <Shell screen={screen} onNavigate={setScreen}>
+      {error ? (
+        <Alert color="red" title="MIDI unavailable">
+          {error}
+        </Alert>
+      ) : screen === 'configuration' ? (
+        <ConfigurationScreen devices={devices} />
+      ) : screen === 'routing' ? (
+        <RoutingScreen patch={patch} setPatch={setPatch} devices={devices} />
+      ) : (
+        <PerformanceScreen />
+      )}
+    </Shell>
   )
 }
 

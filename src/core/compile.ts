@@ -1,10 +1,10 @@
 import type { Devices, PortInfo } from './backend'
-import type { DeviceKey, Patch } from './patch'
+import { activeScene, type DeviceKey, type Patch } from './patch'
 
 export type Route = {
   inputId: string
   outputIds: string[]
-  // Index into patch.edges for each output (used for stats).
+  // Index into the active scene's edges for each output (used for stats).
   edges: number[]
 }
 
@@ -18,13 +18,14 @@ export type Compiled = {
 const find = (ports: PortInfo[], key: DeviceKey) =>
   ports.find((p) => p.state === 'connected' && p.key === key)
 
-// Pure: patch + live devices -> flat input -> outputs lookup.
+// Pure: active scene + live devices -> flat input -> outputs lookup.
 export function compile(patch: Patch, devices: Devices): Compiled {
+  const { edges } = activeScene(patch)
   const byId = new Map(patch.endpoints.map((e) => [e.id, e]))
   const routes = new Map<string, Route>()
-  const active = patch.edges.map(() => false)
+  const active = edges.map(() => false)
 
-  patch.edges.forEach((edge, i) => {
+  edges.forEach((edge, i) => {
     const from = byId.get(edge.from)?.device
     const to = byId.get(edge.to)?.device
     // Same device on both ends would be a feedback loop.
@@ -42,7 +43,7 @@ export function compile(patch: Patch, devices: Devices): Compiled {
 
   return {
     routes: [...routes.values()],
-    edgeIds: patch.edges.map((e) => e.id),
+    edgeIds: edges.map((e) => e.id),
     active,
   }
 }
