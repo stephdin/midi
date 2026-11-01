@@ -1,14 +1,7 @@
 import { useState } from 'react'
-import {
-  Box,
-  Button,
-  Group,
-  NavLink,
-  SegmentedControl,
-  Stack,
-  Text,
-} from '@mantine/core'
-import { IconPlus } from '@tabler/icons-react'
+import { Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { Devices } from '../core/backend'
 import { activeScene, type Patch } from '../core/patch'
 import { addScene, selectScene } from '../core/patchOps'
@@ -26,54 +19,48 @@ export function RoutingScreen({ patch, setPatch, devices }: Props) {
   const [view, setView] = useState<View>('matrix')
 
   return (
-    <Group align="flex-start" wrap="nowrap" gap="xl">
-      <Box w={200} style={{ flexShrink: 0 }}>
-        <Stack gap={4}>
-          <Text size="xs" fw={700} c="dimmed" tt="uppercase" lts={1} mb={4}>
-            Scenes
-          </Text>
-          {patch.scenes.map((scene) => (
-            <NavLink
-              key={scene.id}
-              label={scene.name}
-              variant="filled"
-              // The filled background is near-white, so force dark text on the active scene.
-              styles={scene.id === patch.activeScene ? { label: { color: 'var(--mantine-color-dark-9)' } } : undefined}
-              active={scene.id === patch.activeScene}
-              onClick={() => setPatch(selectScene(patch, scene.id))}
-            />
-          ))}
+    <div className="flex items-start gap-8">
+      <nav className="flex w-[200px] shrink-0 flex-col gap-1">
+        <h2 className="mb-1 text-xs font-bold tracking-wider text-muted-foreground uppercase">
+          Scenes
+        </h2>
+        {patch.scenes.map((scene) => (
           <Button
-            variant="default"
-            size="xs"
-            mt="xs"
-            leftSection={<IconPlus size={14} />}
-            onClick={() => setPatch(addScene(patch))}
+            key={scene.id}
+            // The default variant is the bright fill with dark text: the active scene.
+            variant={scene.id === patch.activeScene ? 'default' : 'ghost'}
+            className="justify-start"
+            onClick={() => setPatch(selectScene(patch, scene.id))}
           >
-            Add scene
+            {scene.name}
           </Button>
-        </Stack>
-      </Box>
-      <Box style={{ flex: 1, minWidth: 0, overflowX: 'auto' }}>
-        <Group justify="space-between" mb="lg">
-          <Text fw={600} fz="lg">
-            {activeScene(patch).name}
-          </Text>
-          <SegmentedControl
-            value={view}
-            onChange={(v) => setView(v as View)}
-            data={[
-              { value: 'matrix', label: 'Matrix' },
-              { value: 'graph', label: 'Graph' },
-            ]}
-          />
-        </Group>
+        ))}
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-2"
+          onClick={() => setPatch(addScene(patch))}
+        >
+          <Plus />
+          Add scene
+        </Button>
+      </nav>
+      <div className="min-w-0 flex-1 overflow-x-auto">
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-lg font-semibold">{activeScene(patch).name}</h2>
+          <Tabs value={view} onValueChange={(v) => setView(v as View)}>
+            <TabsList>
+              <TabsTrigger value="matrix">Matrix</TabsTrigger>
+              <TabsTrigger value="graph">Graph</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
         {view === 'matrix' ? (
           <Matrix patch={patch} setPatch={setPatch} devices={devices} />
         ) : (
-          <Text c="dimmed">graph here</Text>
+          <p className="text-muted-foreground">graph here</p>
         )}
-      </Box>
-    </Group>
+      </div>
+    </div>
   )
 }

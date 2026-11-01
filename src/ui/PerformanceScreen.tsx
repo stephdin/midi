@@ -1,4 +1,5 @@
-import { Button, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 import { activeScene, type Patch } from '../core/patch'
 import { selectScene } from '../core/patchOps'
 import { Led } from './Led'
@@ -18,76 +19,62 @@ export function PerformanceScreen({ patch, setPatch, onOpenRouting }: Props) {
   const routes = activeScene(patch).edges.filter((e) => e.enabled)
 
   return (
-    <Stack gap={40}>
-      <SimpleGrid cols={{ base: 2, sm: 3, md: 4 }}>
+    <div className="flex flex-col gap-10">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
         {patch.scenes.map((scene) => {
           const active = scene.id === patch.activeScene
           return (
-            <Paper
+            <button
               key={scene.id}
-              component="button"
               type="button"
-              withBorder
-              p="lg"
-              h={110}
               onClick={() => setPatch(selectScene(patch, scene.id))}
-              style={{
-                cursor: 'pointer',
-                textAlign: 'left',
-                // Active = bright, inactive = dark.
-                background: active ? 'var(--mantine-color-gray-0)' : 'transparent',
-                color: active ? 'var(--mantine-color-dark-9)' : 'var(--mantine-color-dimmed)',
-                borderColor: active ? 'var(--mantine-color-gray-0)' : undefined,
-                transition: 'background 150ms, color 150ms',
-              }}
+              className={cn(
+                'flex h-[110px] cursor-pointer flex-col justify-between rounded-md border p-5 text-left transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50',
+                // Active = bright, inactive = dark. Text colors are explicit so they stay readable on the fill.
+                active
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'bg-transparent text-muted-foreground hover:bg-accent/50',
+              )}
             >
-              <Stack justify="space-between" h="100%">
-                <Text fw={600} fz="lg" c={active ? 'dark.9' : undefined}>
-                  {scene.name}
-                </Text>
-                <Text size="sm" c={active ? 'dark.6' : 'dimmed'}>
-                  {routeCount(scene.edges.filter((e) => e.enabled).length)}
-                </Text>
-              </Stack>
-            </Paper>
+              <span className="text-lg font-semibold">{scene.name}</span>
+              <span className={cn('text-sm', active ? 'text-primary-foreground/75' : 'text-muted-foreground')}>
+                {routeCount(scene.edges.filter((e) => e.enabled).length)}
+              </span>
+            </button>
           )
         })}
-      </SimpleGrid>
+      </div>
 
-      <Stack gap="xs">
-        <Text size="xs" fw={700} c="dimmed" tt="uppercase" lts={1}>
-          Live
-        </Text>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-xs font-bold tracking-wider text-muted-foreground uppercase">Live</h2>
         {routes.length === 0 ? (
-          <Group>
-            <Text c="dimmed">This scene has no routes yet.</Text>
-            <Button variant="default" size="xs" onClick={onOpenRouting}>
+          <div className="flex items-center gap-4">
+            <p className="text-muted-foreground">This scene has no routes yet.</p>
+            <Button variant="outline" size="sm" onClick={onOpenRouting}>
               Open Routing
             </Button>
-          </Group>
+          </div>
         ) : (
           routes.map((edge) => {
             const stat = stats.find((s) => s.id === edge.id)
             const from = labels.get(edge.from) ?? edge.from
             const to = labels.get(edge.to) ?? edge.to
             return (
-              <Paper key={edge.id} withBorder px="md" py="sm">
-                <Group justify="space-between">
-                  <Group gap="md">
-                    <Led lit={flowing.has(edge.id)} label={from} size={12} />
-                    <Text>
-                      {from} → {to}
-                    </Text>
-                  </Group>
-                  <Text ff="monospace" c={stat?.active ? undefined : 'dimmed'}>
-                    {stat?.active ? stat.count : 'offline'}
-                  </Text>
-                </Group>
-              </Paper>
+              <div key={edge.id} className="flex items-center justify-between rounded-md border px-4 py-2.5">
+                <div className="flex items-center gap-4">
+                  <Led lit={flowing.has(edge.id)} label={from} size={12} />
+                  <span>
+                    {from} → {to}
+                  </span>
+                </div>
+                <span className={cn('font-mono', !stat?.active && 'text-muted-foreground')}>
+                  {stat?.active ? stat.count : 'offline'}
+                </span>
+              </div>
             )
           })
         )}
-      </Stack>
-    </Stack>
+      </div>
+    </div>
   )
 }

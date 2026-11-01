@@ -1,4 +1,3 @@
-import { Group, Text } from '@mantine/core'
 import type { Devices } from '../core/backend'
 import { activeScene, type Patch } from '../core/patch'
 import { Led } from './Led'
@@ -19,15 +18,13 @@ export function StatusStrip({ patch, devices }: { patch: Patch; devices: Devices
   )
 
   return (
-    <Group gap="md">
-      <Group gap={8}>
+    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         {[...connected].map(([key, name]) => (
           <Led key={key} lit={litDevices.has(key)} label={name} />
         ))}
-      </Group>
-      <Text size="sm" c="dimmed">
-        {scene.name}
-      </Text>
-    </Group>
+      </div>
+      <span className="text-sm text-muted-foreground">{scene.name}</span>
+    </div>
   )
 }

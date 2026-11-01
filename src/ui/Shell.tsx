@@ -1,18 +1,13 @@
 import type { ReactNode } from "react";
-import { Container, Group, Tabs, Text } from "@mantine/core";
-import {
-  IconActivity,
-  IconPlugConnected,
-  IconRoute,
-  type Icon,
-} from "@tabler/icons-react";
+import { Activity, PlugZap, Route, type LucideIcon } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export type Screen = "performance" | "routing" | "configuration";
 
-const screens: { id: Screen; label: string; icon: Icon }[] = [
-  { id: "performance", label: "Performance", icon: IconActivity },
-  { id: "routing", label: "Routing", icon: IconRoute },
-  { id: "configuration", label: "Configuration", icon: IconPlugConnected },
+const screens: { id: Screen; label: string; icon: LucideIcon }[] = [
+  { id: "performance", label: "Performance", icon: Activity },
+  { id: "routing", label: "Routing", icon: Route },
+  { id: "configuration", label: "Configuration", icon: PlugZap },
 ];
 
 type Props = {
@@ -24,31 +19,22 @@ type Props = {
 
 export function Shell({ screen, onNavigate, status, children }: Props) {
   return (
-    <Container size="lg" py="lg">
-      <Group justify="space-between" mb="lg">
-        <Text fw={700} fz="lg" lts={1}>
-          MIDI Patcher
-        </Text>
+    <div className="mx-auto max-w-6xl px-4 py-6">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-lg font-bold tracking-wider">MIDI Patcher</h1>
         {status}
-      </Group>
-      <Tabs
-        variant="outline"
-        value={screen}
-        onChange={(v) => v && onNavigate(v as Screen)}
-      >
-        <Tabs.List>
+      </div>
+      <Tabs value={screen} onValueChange={(v) => onNavigate(v as Screen)}>
+        <TabsList variant="line" className="w-full justify-start border-b">
           {screens.map(({ id, label, icon: ScreenIcon }) => (
-            <Tabs.Tab
-              key={id}
-              value={id}
-              leftSection={<ScreenIcon size={16} />}
-            >
+            <TabsTrigger key={id} value={id} className="flex-none px-3">
+              <ScreenIcon />
               {label}
-            </Tabs.Tab>
+            </TabsTrigger>
           ))}
-        </Tabs.List>
+        </TabsList>
       </Tabs>
-      <div style={{ paddingTop: "var(--mantine-spacing-xl)" }}>{children}</div>
-    </Container>
+      <div className="pt-8">{children}</div>
+    </div>
   );
 }

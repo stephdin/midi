@@ -1,5 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { Alert } from '@mantine/core'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { backend, router, store } from '../composition'
 import { emptyPatch, type Patch } from '../core/patch'
 import { ConfigurationScreen } from './ConfigurationScreen'
@@ -40,8 +40,9 @@ function App() {
       status={<StatusStrip patch={patch} devices={devices} />}
     >
       {error ? (
-        <Alert color="red" title="MIDI unavailable">
-          {error}
+        <Alert variant="destructive">
+          <AlertTitle>MIDI unavailable</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : screen === 'configuration' ? (
         <ConfigurationScreen devices={devices} />

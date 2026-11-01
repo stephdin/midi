@@ -1,4 +1,5 @@
-import { Badge, Card, Group, SimpleGrid, Stack, Text } from '@mantine/core'
+import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
 import type { Devices, PortInfo } from '../core/backend'
 import { deviceGroup } from './deviceGroups'
 import { Led } from './Led'
@@ -21,41 +22,37 @@ function groupDevices(devices: Devices): Device[] {
 function Ports({ title, ports }: { title: string; ports: PortInfo[] }) {
   if (ports.length === 0) return null
   return (
-    <Group gap={6} wrap="wrap">
-      <Text size="xs" c="dimmed" w={32}>
-        {title}
-      </Text>
+    <div className="flex flex-wrap items-center gap-1.5">
+      <span className="w-8 text-xs text-muted-foreground">{title}</span>
       {ports.map((p) => (
-        <Badge key={p.id} variant="outline" color="gray" tt="none" fw={400}>
+        <Badge key={p.id} variant="outline" className="font-normal">
           {p.name}
         </Badge>
       ))}
-    </Group>
+    </div>
   )
 }
 
 export function ConfigurationScreen({ devices }: { devices: Devices }) {
   const list = groupDevices(devices)
 
-  if (list.length === 0) return <Text c="dimmed">No devices connected</Text>
+  if (list.length === 0) return <p className="text-muted-foreground">No devices connected</p>
 
   return (
-    <SimpleGrid cols={{ base: 1, sm: 2 }}>
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {list.map((d) => {
         const online = [...d.inputs, ...d.outputs].some((p) => p.state === 'connected')
         return (
-          <Card key={d.name} withBorder padding="md">
-            <Stack gap="sm">
-              <Group gap="sm">
-                <Led lit={online} label={online ? 'Online' : 'Offline'} size={12} />
-                <Text fw={600}>{d.name}</Text>
-              </Group>
-              <Ports title="In" ports={d.inputs} />
-              <Ports title="Out" ports={d.outputs} />
-            </Stack>
+          <Card key={d.name} className="gap-3 p-4">
+            <div className="flex items-center gap-3">
+              <Led lit={online} label={online ? 'Online' : 'Offline'} size={12} />
+              <span className="font-semibold">{d.name}</span>
+            </div>
+            <Ports title="In" ports={d.inputs} />
+            <Ports title="Out" ports={d.outputs} />
           </Card>
         )
       })}
-    </SimpleGrid>
+    </div>
   )
 }
