@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { activeScene, type Patch } from '../core/patch'
-import { selectScene } from '../core/patchOps'
-import { Led } from './Led'
-import { useRouterActivity } from './useRouterActivity'
+import { activeScene, type Patch } from '@/core/patch'
+import { selectScene } from '@/core/patchOps'
+import { Led } from '@/ui/shared/Led'
+import { useRouterActivity } from '@/ui/shared/useRouterActivity'
 
 type Props = {
   patch: Patch

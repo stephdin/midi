@@ -7,10 +7,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import type { Devices } from '../core/backend'
-import { activeScene, type Patch } from '../core/patch'
-import { deviceEndpoint, toggleRoute } from '../core/patchOps'
-import { useRouterActivity } from './useRouterActivity'
+import type { Devices } from '@/core/backend'
+import { activeScene, type Patch } from '@/core/patch'
+import { deviceEndpoint, toggleRoute } from '@/core/patchOps'
+import { useRouterActivity } from '@/ui/shared/useRouterActivity'
 
 type Device = { key: string; label: string }
 

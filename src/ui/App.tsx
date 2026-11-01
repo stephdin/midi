@@ -1,12 +1,12 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { backend, router, store } from '../composition'
-import { emptyPatch, type Patch } from '../core/patch'
-import { ConfigurationScreen } from './ConfigurationScreen'
-import { RoutingScreen } from './RoutingScreen'
-import { PerformanceScreen } from './PerformanceScreen'
-import { Shell, type Screen } from './Shell'
-import { StatusStrip } from './StatusStrip'
+import { backend, router, store } from '@/composition'
+import { emptyPatch, type Patch } from '@/core/patch'
+import { ConfigurationScreen } from './configuration/ConfigurationScreen'
+import { RoutingScreen } from './routing/RoutingScreen'
+import { PerformanceScreen } from './performance/PerformanceScreen'
+import { Shell, type Screen } from './shell/Shell'
+import { StatusStrip } from './shell/StatusStrip'
 
 function App() {
   const devices = useSyncExternalStore(backend.subscribe, backend.getSnapshot)

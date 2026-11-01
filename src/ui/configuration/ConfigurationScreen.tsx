@@ -1,8 +1,8 @@
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
-import type { Devices, PortInfo } from '../core/backend'
+import type { Devices, PortInfo } from '@/core/backend'
 import { deviceGroup } from './deviceGroups'
-import { Led } from './Led'
+import { Led } from '@/ui/shared/Led'
 
 type Device = { name: string; inputs: PortInfo[]; outputs: PortInfo[] }
 

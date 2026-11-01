@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { router } from '../composition'
-import type { EdgeStat } from '../core/router'
+import { router } from '@/composition'
+import type { EdgeStat } from '@/core/router'
 
 // Polls router.stats() a few times per second. `flowing` holds the edges whose counter moved since the last poll.
 export function useRouterActivity() {

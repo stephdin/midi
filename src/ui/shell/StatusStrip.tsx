@@ -1,7 +1,7 @@
-import type { Devices } from '../core/backend'
-import { activeScene, type Patch } from '../core/patch'
-import { Led } from './Led'
-import { useRouterActivity } from './useRouterActivity'
+import type { Devices } from '@/core/backend'
+import { activeScene, type Patch } from '@/core/patch'
+import { Led } from '@/ui/shared/Led'
+import { useRouterActivity } from '@/ui/shared/useRouterActivity'
 
 // Always visible: one LED per connected device (lit while routed messages flow) and the active scene.
 export function StatusStrip({ patch, devices }: { patch: Patch; devices: Devices }) {
